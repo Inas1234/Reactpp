@@ -23,6 +23,13 @@ public:
         node.appendChild(child.node);
         return *this;
     }
+
+    template <typename ... Elements>
+    Element& children(Elements... children) {
+        (node.appendChild(children.getNode()), ...);
+        return *this;
+    }
+    
     
     Element& attr(std::string key, std::string value) {
         node.setAttribute(key, value);

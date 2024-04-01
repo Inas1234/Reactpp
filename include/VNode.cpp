@@ -7,12 +7,12 @@ extern "C" {
     void invokeCppCallback(const char* callbackId) {
         EM_ASM({ console.log('Callback invoked for ID: ' + UTF8ToString($0)); }, callbackId);
         
-        std::string callbackIdStr(callbackId); // Convert C string to C++ string
+        std::string callbackIdStr(callbackId); 
         auto it = VNode::eventListeners.find(callbackIdStr);
         
         if (it != VNode::eventListeners.end()) {
             std::cout << "Executing callback for ID: " << callbackIdStr << std::endl;
-            it->second(); // Execute the callback function
+            it->second(); 
         } else {
             std::cerr << "Callback with ID '" << callbackIdStr << "' not found." << std::endl;
         }
