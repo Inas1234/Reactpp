@@ -5,26 +5,31 @@ int x = 0;
 
 int main() {
     docBegin;
-    Element main = div;
+    Element main = Div;
     main.children(
-        h1.text("Hello, World!"),
-        p.text("This is a paragraph."),
-        div.children(
-            h2.text("This is a subheading."),
-            p.text("This is another paragraph.")
+        H1.text("Hello, World!"),
+        P.text("This is a paragraph."),
+        Div.children(
+            H2.text("This is a subheading."),
+            P.text("This is another paragraph.")
         ),
-        button.text("Click me!").on("click", [](){
+        Button.text("Click me!").on("click", [](){
             x++;
             std::cout << "Count: " << x << std::endl;
+            EM_ASM_INT({
+                document.getElementById('count').textContent = 'Count: ' + $0;
+                return 0; 
+            }, x);
         }),
-        form.children(
-            label.text("Name:"),
-            input.attr("type", "text"),
-            br,
-            label.text("Email:"),
-            input.attr("type", "email"),
-            br,
-            button.text("Submit").attr("type", "submit").on("click", [](){
+        P.attr("id", "count").text("Count: " + std::to_string(x)),
+        Form.children(
+            Label.text("Name:"),
+            Input.attr("type", "text"),
+            Br,
+            Label.text("Email:"),
+            Input.attr("type", "email"),
+            Br,
+            Button.text("Submit").attr("type", "submit").on("click", [](){
                 
                 std::cout << "Form submitted!" << std::endl;
             })

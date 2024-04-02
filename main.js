@@ -958,7 +958,8 @@ function dbg(...args) {
 // === Body ===
 
 var ASM_CONSTS = {
-  82948: ($0) => { console.log('Callback invoked for ID: ' + UTF8ToString($0)); }
+  82964: ($0) => { document.getElementById('count').textContent = 'Count: ' + $0; return 0; },  
+ 83041: ($0) => { console.log('Callback invoked for ID: ' + UTF8ToString($0)); }
 };
 function attachEventListener(elementId,eventType,callbackId) { setTimeout(function(eventTypeStr, callbackIdStr, elementIdStr) { console.log("Preparing to attach event listener", { eventTypeStr, callbackIdStr, elementIdStr }); var element = document.getElementById(elementIdStr); if (element) { console.log("Element found, attaching event listener", { element, eventType: eventTypeStr }); element.addEventListener(eventTypeStr, function() { console.log("Event triggered for element and callback ID", { elementId: elementIdStr, callbackId: callbackIdStr }); Module.ccall('invokeCppCallback', 'void', ['string'], [callbackIdStr]); }, false); } else { console.log("Element not found for ID:", elementIdStr); } }, 0, UTF8ToString(eventType), UTF8ToString(callbackId), UTF8ToString(elementId)); }
 
@@ -5941,8 +5942,8 @@ var dynCall_jiji = Module['dynCall_jiji'] = createExportWrapper('dynCall_jiji');
 var dynCall_iiiiij = Module['dynCall_iiiiij'] = createExportWrapper('dynCall_iiiiij');
 var dynCall_iiiiijj = Module['dynCall_iiiiijj'] = createExportWrapper('dynCall_iiiiijj');
 var dynCall_iiiiiijj = Module['dynCall_iiiiiijj'] = createExportWrapper('dynCall_iiiiiijj');
-var ___start_em_js = Module['___start_em_js'] = 83013;
-var ___stop_em_js = Module['___stop_em_js'] = 83817;
+var ___start_em_js = Module['___start_em_js'] = 83106;
+var ___stop_em_js = Module['___stop_em_js'] = 83910;
 
 // include: postamble.js
 // === Auto-generated postamble setup entry stuff ===
