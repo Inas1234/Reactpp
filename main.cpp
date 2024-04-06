@@ -1,12 +1,13 @@
 #include <iostream>
 #include "./include/HtmlElements.hpp"
+#include "./include/Functions.hpp"
 
 int x = 0;
 
 int main() {
     docBegin;
     Element main = Div;
-    main.children(
+    main.attr("id", "main").children(
         H1.text("Hello, World!"),
         P.text("This is a paragraph."),
         Div.children(
@@ -16,13 +17,10 @@ int main() {
         Button.text("Click me!").on("click", [](){
             x++;
             std::cout << "Count: " << x << std::endl;
-            EM_ASM_INT({
-                document.getElementById('count').textContent = 'Count: ' + $0;
-                return 0; 
-            }, x);
+            UPDATE_ELEMENT_CONTENT("count", "Count: " + std::to_string(x));
         }),
         P.attr("id", "count").text("Count: " + std::to_string(x)),
-        Form.children(
+        Form.attr("id", "nesto").children(
             Label.text("Name:"),
             Input.attr("type", "text"),
             Br,
@@ -30,8 +28,7 @@ int main() {
             Input.attr("type", "email"),
             Br,
             Button.text("Submit").attr("type", "submit").on("click", [](){
-                
-                std::cout << "Form submitted!" << std::endl;
+                PREVENT_DEFAULT_ACTION("nesto", "submit");
             })
         )
 
@@ -40,5 +37,7 @@ int main() {
 
     docEnd(main.getNode());
 
+
+    
     return 0;
 }
