@@ -50,3 +50,37 @@
             e.preventDefault(); \
         }, false); \
     }, (ID), (EVENT));
+
+#define CSS_FILE_PATH(PATH) \
+    EM_ASM({ \
+        var head = document.head; \
+        var link = document.createElement("link"); \
+        link.rel = "stylesheet"; \
+        link.type = "text/css"; \
+        link.href = UTF8ToString($0); \
+        head.appendChild(link); \
+    }, (PATH));
+
+
+#define GET_VALUE(ID) \
+    EM_ASM_INT({ \
+        var element = document.getElementById(UTF8ToString($0)); \
+        return element.value; \
+    }, (ID));
+
+
+const char* getValueById(const char* elementId) {
+    int bufferSize = 256;
+    char* buffer = (char*)malloc(bufferSize * sizeof(char));
+    if (!buffer) return nullptr; 
+    EM_ASM_({
+        var element = document.getElementById(UTF8ToString($0));
+        if (element && element.value) {
+            stringToUTF8(element.value, $1, $2);
+        } else {
+            setValue($1, "", "i8");
+        }
+    }, elementId, buffer, bufferSize);
+
+    return buffer;
+}

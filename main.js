@@ -972,9 +972,10 @@ function dbg(...args) {
 // === Body ===
 
 var ASM_CONSTS = {
-  97880: ($0, $1) => { document.getElementById(UTF8ToString($0)).textContent = UTF8ToString($1); },  
- 97958: ($0, $1) => { var element = document.getElementById(UTF8ToString($0)); console.log("Adding preventDefault to: ", element); element.addEventListener(UTF8ToString($1), function(e) { console.log("Event triggered, preventing default."); e.preventDefault(); }, false); },  
- 98212: ($0) => { console.log('Callback invoked for ID: ' + UTF8ToString($0)); }
+  97928: ($0, $1, $2) => { var element = document.getElementById(UTF8ToString($0)); if (element && element.value) { stringToUTF8(element.value, $1, $2); } else { setValue($1, "", "i8"); } },  
+ 98093: ($0, $1) => { document.getElementById(UTF8ToString($0)).textContent = UTF8ToString($1); },  
+ 98171: ($0, $1) => { var element = document.getElementById(UTF8ToString($0)); element.addEventListener(UTF8ToString($1), function(e) { e.preventDefault(); }, false); },  
+ 98320: ($0) => { console.log('Callback invoked for ID: ' + UTF8ToString($0)); }
 };
 function attachEventListener(elementId,eventType,callbackId) { setTimeout(function(eventTypeStr, callbackIdStr, elementIdStr) { console.log("Preparing to attach event listener", { eventTypeStr, callbackIdStr, elementIdStr }); var element = document.getElementById(elementIdStr); if (element) { console.log("Element found, attaching event listener", { element, eventType: eventTypeStr }); element.addEventListener(eventTypeStr, function() { console.log("Event triggered for element and callback ID", { elementId: elementIdStr, callbackId: callbackIdStr }); Module.ccall('invokeCppCallback', 'void', ['string'], [callbackIdStr]); }, false); } else { console.log("Element not found for ID:", elementIdStr); } }, 0, UTF8ToString(eventType), UTF8ToString(callbackId), UTF8ToString(elementId)); }
 
@@ -6144,13 +6145,13 @@ var wasmImports = {
 };
 var wasmExports = createWasm();
 var ___wasm_call_ctors = createExportWrapper('__wasm_call_ctors');
+var _malloc = createExportWrapper('malloc');
 var ___cxa_free_exception = createExportWrapper('__cxa_free_exception');
+var _free = createExportWrapper('free');
 var _main = Module['_main'] = createExportWrapper('main');
 var _invokeCppCallback = Module['_invokeCppCallback'] = createExportWrapper('invokeCppCallback');
-var _malloc = createExportWrapper('malloc');
 var ___getTypeName = createExportWrapper('__getTypeName');
 var _fflush = createExportWrapper('fflush');
-var _free = createExportWrapper('free');
 var _setThrew = createExportWrapper('setThrew');
 var setTempRet0 = createExportWrapper('setTempRet0');
 var _emscripten_stack_init = () => (_emscripten_stack_init = wasmExports['emscripten_stack_init'])();
@@ -6172,8 +6173,8 @@ var dynCall_jiiii = Module['dynCall_jiiii'] = createExportWrapper('dynCall_jiiii
 var dynCall_iiiiij = Module['dynCall_iiiiij'] = createExportWrapper('dynCall_iiiiij');
 var dynCall_iiiiijj = Module['dynCall_iiiiijj'] = createExportWrapper('dynCall_iiiiijj');
 var dynCall_iiiiiijj = Module['dynCall_iiiiiijj'] = createExportWrapper('dynCall_iiiiiijj');
-var ___start_em_js = Module['___start_em_js'] = 98277;
-var ___stop_em_js = Module['___stop_em_js'] = 99081;
+var ___start_em_js = Module['___start_em_js'] = 98385;
+var ___stop_em_js = Module['___stop_em_js'] = 99189;
 function invoke_iii(index,a1,a2) {
   var sp = stackSave();
   try {
