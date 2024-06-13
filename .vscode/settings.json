@@ -56,6 +56,11 @@
         "variant": "cpp",
         "algorithm": "cpp",
         "iterator": "cpp",
-        "memory_resource": "cpp"
+        "memory_resource": "cpp",
+        "any": "cpp",
+        "forward_list": "cpp",
+        "iomanip": "cpp",
+        "span": "cpp",
+        "valarray": "cpp"
     }
 }

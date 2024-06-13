@@ -34,6 +34,8 @@ public:
                     const char* name = getValueById("name");
                     const char* email = getValueById("email");
                     std::cout << "Name: " << name << " " << "Email: " << email << std::endl;
+                    const char* response = get("https://jsonplaceholder.typicode.com", "/posts/1");
+                    std::cout << response << std::endl;
 
                     free((void*)name);
                     free((void*)email);

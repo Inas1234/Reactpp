@@ -1,6 +1,7 @@
 #pragma once
 #include "HtmlElements.hpp"
 
+
 #define UPDATE_ELEMENT_CONTENT(ID, CONTENT) \
     do { \
         std::string content_ = (CONTENT); \
@@ -82,5 +83,44 @@ const char* getValueById(const char* elementId) {
         }
     }, elementId, buffer, bufferSize);
 
+    return buffer;
+}
+
+
+const char* get(const char* host, const char* path) {
+    int bufferSize = 4096;
+    char* buffer = (char*)malloc(bufferSize * sizeof(char));
+    if (!buffer) return nullptr;
+    
+    EM_ASM_({
+        var host = UTF8ToString($0);
+        var path = UTF8ToString($1);
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", host + path, false);
+        xhr.send();
+        var response = xhr.responseText;
+        stringToUTF8(response, $2, $3);
+    }, host, path, buffer, bufferSize);
+    
+    return buffer;
+}
+
+const char* post(const char* host, const char* path, const char* data) {
+    int bufferSize = 4096;
+    char* buffer = (char*)malloc(bufferSize * sizeof(char));
+    if (!buffer) return nullptr;
+    
+    EM_ASM_({
+        var host = UTF8ToString($0);
+        var path = UTF8ToString($1);
+        var data = UTF8ToString($2);
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", host + path, false);
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        xhr.send(data);
+        var response = xhr.responseText;
+        stringToUTF8(response, $3, $4);
+    }, host, path, data, buffer, bufferSize);
+    
     return buffer;
 }
