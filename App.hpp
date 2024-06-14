@@ -1,5 +1,6 @@
 #include "./include/HtmlElements.hpp"
 #include "./include/Functions.hpp"
+#include "./include/Mlinson/JsonParser.hpp"
 
 int x = 0;
 
@@ -35,7 +36,14 @@ public:
                     const char* email = getValueById("email");
                     std::cout << "Name: " << name << " " << "Email: " << email << std::endl;
                     const char* response = get("https://jsonplaceholder.typicode.com", "/posts/1");
+                    
+                    JSONParser parser;
+                    JSONValue jsonValue = parser.parse(response);
+                    JSONObject jsonObject = jsonValue.getObject();
                     std::cout << response << std::endl;
+                    std::cout << jsonObject["title"]->getString() << std::endl;
+
+
 
                     free((void*)name);
                     free((void*)email);
