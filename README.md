@@ -150,7 +150,7 @@ App() {
     }
 ```
 
-## Development
+## Contributing
 
 To contribute to React++, follow these steps:
 
