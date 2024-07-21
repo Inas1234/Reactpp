@@ -1,12 +1,24 @@
 #include "./include/HtmlElements.hpp"
 #include "./include/Functions.hpp"
 #include "./include/Mlinson/JsonParser.hpp"
+#include "./include/Routes.hpp"
 
 int x = 0;
 
 class App {
 public:
     App() {
+        Router::init();
+        Router::addRoute("/", [](){
+            home();
+        });
+        Router::addRoute("/about", [](){
+            about();
+        });
+
+        Router::onRouteChange();
+    }
+    static void home(){
         docBegin;
         Element main = Div;
         main.attr("id", "main").children(
@@ -48,9 +60,24 @@ public:
                     free((void*)name);
                     free((void*)email);
                 })
-            )
+            ),
+            Button.text("About").on("click", [](){
+                Router::navigateTo("/about");
+            })
+        );
+        docEnd(main.getNode());
+    }  
+    static void about(){
+        docBegin;
+        Element main = Div;
+        main.attr("id", "main").children(
+            H1.text("ASS"),
+            P.text("ASS."),
+            Button.text("Home").on("click", [](){
+                Router::navigateTo("/");
+            })
         );
         docEnd(main.getNode());
     }
-    
 };
+

@@ -7,7 +7,13 @@
 
 #define docBegin val document = val::global("document")
 #define docEnd(node) val element = node.render(document); \
-    document["body"].call<void>("appendChild", element);
+    val root = document.call<val>("getElementById", std::string("root")); \
+    if (!root.isNull()) { \
+        root.call<void>("appendChild", element); \
+        std::cout << "Appended content to root." << std::endl;  \
+    } else { \
+        std::cerr << "Element with id 'root' not found for appending." << std::endl; \
+    }
 
 
 class Element {
