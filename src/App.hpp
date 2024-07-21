@@ -1,7 +1,4 @@
-#include "./include/HtmlElements.hpp"
-#include "./include/Functions.hpp"
-#include "./include/Mlinson/JsonParser.hpp"
-#include "./include/Routes.hpp"
+#include "../include/Reactpp.cpp"
 
 int x = 0;
 
@@ -22,7 +19,7 @@ public:
         docBegin;
         Element main = Div;
         main.attr("id", "main").children(
-            H1.text("Hello, World!"),
+            H1.text("Hello, A!"),
             P.text("This is a paragraph."),
             Div.children(
                 H2.text("This is a subheading."),
