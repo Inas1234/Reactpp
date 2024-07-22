@@ -5,5 +5,6 @@
 #include "./Functions.hpp"
 #include "./Mlinson/JsonParser.hpp"
 #include "./Routes.hpp"
+#include "./State.hpp"
 
 #endif
