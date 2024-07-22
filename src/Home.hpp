@@ -16,7 +16,12 @@ private:
     static int count;
     static const char* name;
 
-    Home(){}
+    Home(){
+        State::getInstance().setState("count2", "0");
+        State::getInstance().subscribe("count2", [](const std::string& value){
+            std::cout << "[Home] Count: " << value << std::endl;
+        });
+    }
 
     void init(){
         docBegin;
@@ -25,7 +30,7 @@ private:
             H1.text("Home"),
             Button.text("Click me!").on("click", [](){
                 Home::count++;
-                std::cout << "[Home] Name: " << Home::name << std::endl;
+                State::getInstance().setState("count2", std::to_string(Home::count));
                 UPDATE_ELEMENT_CONTENT("count", "Count: " + std::to_string(Home::count));
             }),
             P.attr("id", "count").text("Count: " + std::to_string(Home::count)),

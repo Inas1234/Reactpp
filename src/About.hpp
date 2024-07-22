@@ -1,7 +1,6 @@
 #pragma once
 #include "../include/Reactpp.hpp"
 
-int count = 0;
 
 class About {
 public:
@@ -12,7 +11,12 @@ public:
 
 private:
 
-    About(){}
+    About(){
+        State::getInstance().setState("count", "0");
+        State::getInstance().subscribe("count", [](const std::string& value){
+            std::cout << "[About] Count: " << value << std::endl;
+        });
+    }
 
     void init(){
         docBegin;
@@ -21,8 +25,9 @@ private:
             H1.text("About"),
             P.text("This is a simple example of a React-like C++ library."),
             Button.text("Click me!").on("click", [](){
+                int count = std::stoi(State::getInstance().getState("count"));
                 count++;
-                std::cout << "[About] Count: " << count << std::endl;
+                State::getInstance().setState("count", std::to_string(count));
             }),
             Button.text("Go to Home").on("click", [](){
                 Router::navigateTo("/");
