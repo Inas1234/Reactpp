@@ -3,7 +3,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include <map>
+#include <unordered_map>
 
 #ifdef __EMSCRIPTEN__
 #include <emscripten.h>
@@ -24,7 +24,7 @@ public:
         attributes["on" + event] = addEventListener(event, listener);
     }
 
-    std::map<std::string, std::function<void()>> getEventListeners() { return eventListeners; }
+    std::unordered_map<std::string, std::function<void()>> getEventListeners() { return eventListeners; }
 
     static void invokeEventListener(const std::string& event) {
         auto it = eventListeners.find(event);
@@ -37,9 +37,9 @@ public:
     }
 
     val render(val document) const;
-    static std::string addEventListener(std::string event, std::function<void()> listener);
+    static std::string addEventListener(const std::string& event, std::function<void()> listener);
 
-    static std::map<std::string, std::function<void()>> eventListeners;
+    static std::unordered_map<std::string, std::function<void()>> eventListeners;
 private:
     std::string tag;
     std::string textContent;

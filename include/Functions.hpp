@@ -1,6 +1,8 @@
 #pragma once
 #include "HtmlElements.hpp"
-
+#include <emscripten/emscripten.h>
+#include <string>
+#include <vector>
 
 #define UPDATE_ELEMENT_CONTENT(ID, CONTENT) \
     do { \
@@ -32,24 +34,31 @@
 #define REMOVE_ELEMENT(ID) \
     EM_ASM({ \
         var element = document.getElementById(UTF8ToString($0)); \
-        element.parentNode.removeChild(element); \
+        if (element && element.parentNode) { \
+            element.parentNode.removeChild(element); \
+        } \
     }, (ID));
 
 
 #define ADD_EVENT_LISTENER(ID, EVENT, JS_ACTION) \
     EM_ASM({ \
-        document.getElementById(UTF8ToString($0)).addEventListener(UTF8ToString($1), function() { \
-            eval(UTF8ToString($2)); \
-        }); \
+        var element = document.getElementById(UTF8ToString($0)); \
+        if (element) { \
+            element.addEventListener(UTF8ToString($1), function() { \
+                eval(UTF8ToString($2)); \
+            }); \
+        } \
     }, (ID), (EVENT), (JS_ACTION));
 
 
 #define PREVENT_DEFAULT_ACTION(ID, EVENT) \
     EM_ASM({ \
         var element = document.getElementById(UTF8ToString($0)); \
-        element.addEventListener(UTF8ToString($1), function(e) { \
-            e.preventDefault(); \
-        }, false); \
+        if (element) { \
+            element.addEventListener(UTF8ToString($1), function(e) { \
+                e.preventDefault(); \
+            }); \
+        } \
     }, (ID), (EVENT));
 
 #define CSS_FILE_PATH(PATH) \
@@ -66,14 +75,15 @@
 #define GET_VALUE(ID) \
     EM_ASM_INT({ \
         var element = document.getElementById(UTF8ToString($0)); \
-        return element.value; \
+        return element ? element.value : ""; \
     }, (ID));
 
 
 const char* getValueById(const char* elementId) {
     int bufferSize = 256;
     char* buffer = (char*)malloc(bufferSize * sizeof(char));
-    if (!buffer) return nullptr; 
+    if (!buffer) return nullptr;
+    
     EM_ASM_({
         var element = document.getElementById(UTF8ToString($0));
         if (element && element.value) {
@@ -93,13 +103,10 @@ const char* get(const char* host, const char* path) {
     if (!buffer) return nullptr;
     
     EM_ASM_({
-        var host = UTF8ToString($0);
-        var path = UTF8ToString($1);
         var xhr = new XMLHttpRequest();
-        xhr.open("GET", host + path, false);
+        xhr.open("GET", UTF8ToString($0) + UTF8ToString($1), false);
         xhr.send();
-        var response = xhr.responseText;
-        stringToUTF8(response, $2, $3);
+        stringToUTF8(xhr.responseText, $2, $3);
     }, host, path, buffer, bufferSize);
     
     return buffer;
@@ -111,15 +118,11 @@ const char* post(const char* host, const char* path, const char* data) {
     if (!buffer) return nullptr;
     
     EM_ASM_({
-        var host = UTF8ToString($0);
-        var path = UTF8ToString($1);
-        var data = UTF8ToString($2);
         var xhr = new XMLHttpRequest();
-        xhr.open("POST", host + path, false);
+        xhr.open("POST", UTF8ToString($0) + UTF8ToString($1), false);
         xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-        xhr.send(data);
-        var response = xhr.responseText;
-        stringToUTF8(response, $3, $4);
+        xhr.send(UTF8ToString($2));
+        stringToUTF8(xhr.responseText, $3, $4);
     }, host, path, data, buffer, bufferSize);
     
     return buffer;
