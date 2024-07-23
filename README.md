@@ -37,79 +37,116 @@ React++ is a modern C++ web framework inspired by React. It enables developers t
 Components in React++ are created using C++ classes. Each component should define its rendering logic and state management.
 
 ```cpp
-#include "../include/Reactpp.cpp"
-
-int x = 0;
+#include "../include/Reactpp.hpp"
+#include "Home.hpp"
+#include "About.hpp"
 
 class App {
 public:
     App() {
         Router::init();
-        Router::addRoute("/", []() {
-            home();
+        Router::addRoute("/", [](){
+            Home::render();
         });
-        Router::addRoute("/about", []() {
-            about();
+        Router::addRoute("/about", [](){
+            About::render();            
         });
+
 
         Router::onRouteChange();
     }
 
-    static void home() {
+};
+```
+
+```cpp
+#pragma once
+
+#include "../include/Reactpp.hpp"
+#include <memory>
+
+
+class Home {
+public:
+    static void render(){
+        Home home;
+        home.init();
+    }
+
+
+private:
+    static int count;
+    static const char* name;
+
+    Home(){
+        State::getInstance().setState("count2", "0");
+        State::getInstance().subscribe("count2", [](const std::string& value){
+            std::cout << "[Home] Count: " << value << std::endl;
+        });
+    }
+
+    void init(){
         docBegin;
         Element main = Div;
         main.attr("id", "main").children(
-            H1.text("Hello, A!"),
-            P.text("This is a paragraph."),
-            Div.children(
-                H2.text("This is a subheading."),
-                P.text("This is another paragraph.")
-            ),
-            Button.text("Click me!").on("click", []() {
-                x++;
-                std::cout << "Count: " << x << std::endl;
-                UPDATE_ELEMENT_CONTENT("count", "Count: " + std::to_string(x));
+            H1.text("Home"),
+            Button.text("Click me!").on("click", [](){
+                Home::count++;
+                State::getInstance().setState("count2", std::to_string(Home::count));
+                UPDATE_ELEMENT_CONTENT("count", "Count: " + std::to_string(Home::count));
             }),
-            P.attr("id", "count").text("Count: " + std::to_string(x)),
-            Form.attr("id", "nesto").children(
-                Label.text("Name:"),
-                Input.attr("type", "text").attr("id", "name"),
-                Br,
-                Label.text("Email:"),
-                Input.attr("type", "email").attr("id", "email"),
-                Br,
-                Button.text("Submit").attr("type", "submit").on("click", []() {
-                    PREVENT_DEFAULT_ACTION("nesto", "submit");
-
-                    const char* name = getValueById("name");
-                    const char* email = getValueById("email");
-                    std::cout << "Name: " << name << " " << "Email: " << email << std::endl;
-                    const char* response = get("https://jsonplaceholder.typicode.com", "/posts/1");
-
-                    JSONParser parser;
-                    JSONValue jsonValue = parser.parse(response);
-                    JSONObject jsonObject = jsonValue.getObject();
-                    std::cout << response << std::endl;
-                    std::cout << jsonObject["title"]->getString() << std::endl;
-
-                    free((void*)name);
-                    free((void*)email);
-                })
-            ),
-            Button.text("About").on("click", []() {
+            P.attr("id", "count").text("Count: " + std::to_string(Home::count)),
+            Button.text("Go to About").on("click", [](){
                 Router::navigateTo("/about");
-            })
+            }),
+            Input.attr("type", "text").attr("placeholder", "Enter your name").attr("id", "name"),
+            Button.text("Submit").on("click", [](){
+                Home::name = getValueById("name");
+                UPDATE_ELEMENT_CONTENT("greet", "Hello, " + std::string(name) + "!");
+            }),
+            P.attr("id", "greet").text("")
         );
         docEnd(main.getNode());
     }
+};
 
-    static void about() {
+int Home::count = 0;
+const char* Home::name = "";
+```
+
+```cpp
+#pragma once
+#include "../include/Reactpp.hpp"
+
+
+class About {
+public:
+    static void render(){
+        About about;
+        about.init();
+    }
+
+private:
+
+    About(){
+        State::getInstance().setState("count", "0");
+        State::getInstance().subscribe("count", [](const std::string& value){
+            std::cout << "[About] Count: " << value << std::endl;
+        });
+    }
+
+    void init(){
         docBegin;
         Element main = Div;
         main.attr("id", "main").children(
-            H1.text("ASS"),
-            P.text("ASS."),
-            Button.text("Home").on("click", []() {
+            H1.text("About"),
+            P.text("This is a simple example of a React-like C++ library."),
+            Button.text("Click me!").on("click", [](){
+                int count = std::stoi(State::getInstance().getState("count"));
+                count++;
+                State::getInstance().setState("count", std::to_string(count));
+            }),
+            Button.text("Go to Home").on("click", [](){
                 Router::navigateTo("/");
             })
         );
@@ -137,17 +174,22 @@ int main() {
 React++ includes a simple routing system inspired by React Router. Define your routes and navigate between them.
 
 ```c++
-App() {
+class App {
+public:
+    App() {
         Router::init();
-        Router::addRoute("/", []() {
-            home();
+        Router::addRoute("/", [](){
+            Home::render();
         });
-        Router::addRoute("/about", []() {
-            about();
+        Router::addRoute("/about", [](){
+            About::render();            
         });
+
 
         Router::onRouteChange();
     }
+
+};
 ```
 
 ## Contributing
